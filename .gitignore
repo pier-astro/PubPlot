@@ -1,0 +1,80 @@
+# macOS system file
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+venv/
+env/
+.env
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Compiled languages
+*.o
+*.a
+*.so
+*.exe
+*.dll
+models/compiled/
+*.mod
+*.smod
+
+# XSPEC
+*.xcm~
+*.qdp~
+
+# Data files (adjust based on your needs)
+*.fits
+*.evt
+*.img
+*.pha
+*.rmf
+*.arf
+# Exception: keep small sample data
+!examples/sample-data/*.fits
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak

@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pubplot"
+version = "0.1.0"
+description = "Make publication friendly plots easy!"
+authors = [
+    { name = "Pierpaolo Condò", email = "pierpaolo.condo@gmail.com" },
+    { name = "Michele Berretti", email = "michele.berretti1999@gmail.com" },
+    ]
+
+dependencies = [
+]
+requires-python = ">=3.8"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.setuptools.package-data]
