@@ -2,9 +2,23 @@ text.usetex: True
 text.latex.preamble: \usepackage{amsmath}\usepackage{amssymb}
 font.family: serif
 font.serif: Times
-savefig.bbox: tight
-savefig.format: pdf
 ytick.labelsize: 9
 xtick.labelsize: 9
 figure.titlesize: 12
 figure.labelsize: 12
+axes.labelsize: 10
+legend.labelsize: 9
+legend.framealpha: 0.3
+
+axes.prop_cycle: cycler('color', ['648FFF', '785EF0', 'DC267F', 'FE6100', 'FFB000'])
+
+
+image.origin: lower
+
+figure.autolayout: True
+
+
+savefig.bbox: tight # Default is standard
+savefig.format: pdf # Default is png
+savefig.dpi: 400 # Minimum is 300
+pdf.compression: 2 # Default is 3
