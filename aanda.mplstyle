@@ -7,7 +7,7 @@ xtick.labelsize: 9
 figure.titlesize: 12
 figure.labelsize: 12
 axes.labelsize: 10
-legend.labelsize: 9
+legend.fontsize: 9
 legend.framealpha: 0.3
 
 axes.prop_cycle: cycler('color', ['648FFF', '785EF0', 'DC267F', 'FE6100', 'FFB000'])

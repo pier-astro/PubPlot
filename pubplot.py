@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt #type: ignore
 import yaml
 
-# jour_sizes should be retrieved from journals.yml
 
 def load_journal_sizes():
     """Load journal sizes from a YAML configuration file.
@@ -16,7 +15,7 @@ def load_journal_sizes():
     return jour_sizes
 
 
-def setup_figure(journal="aanda", columns=1, height_ratio=None, jour_sizes=None):
+def setup_figure(journal="aanda", columns=1, height_ratio=None, jour_sizes=None, gridspec=False, **kwargs):
     """Set up a matplotlib figure with dimensions suitable for publication.
 
     Parameters:
@@ -59,5 +58,11 @@ def setup_figure(journal="aanda", columns=1, height_ratio=None, jour_sizes=None)
     # match case for matplotlib style
     plt.style.use(f"{journal.lower()}.mplstyle")
     
-    fig, ax = plt.subplots(figsize=(width, height))
-    return fig, ax
+    if gridspec:
+        fig = plt.figure(figsize=(width, height), **kwargs)
+        return fig
+    else:
+        fig, ax = plt.subplots(figsize=(width, height), **kwargs)
+        return fig, ax
+
+
