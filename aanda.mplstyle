@@ -1,0 +1,10 @@
+text.usetex: True
+text.latex.preamble: \usepackage{amsmath}\usepackage{amssymb}
+font.family: serif
+font.serif: Times
+savefig.bbox: tight
+savefig.format: pdf
+ytick.labelsize: 9
+xtick.labelsize: 9
+figure.titlesize: 12
+figure.labelsize: 12
