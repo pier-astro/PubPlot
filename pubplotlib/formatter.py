@@ -144,26 +144,34 @@ def set_formatter(ax=None, low=0.01, high=100, axis='both'):
     >>> ax.loglog(x, y)
     >>> set_formatter(ax, low=0.01, high=100)
     """
-    if ax is None:
-        ax = plt.gca()
+    def apply_to_axis(ax_single):
+        def wrap_axis(axis_obj):
+            default_major_formatter = axis_obj.get_major_formatter()
+            if isinstance(default_major_formatter, BaseLogFormatterSciNotation):
+                axis_obj.set_major_formatter(LogFormatterSciNotation(low=low, high=high))
+            elif isinstance(default_major_formatter, BaseScalarFormatter):
+                axis_obj.set_major_formatter(ScalarFormatter(low=low, high=high))
+            
+            default_minor_formatter = axis_obj.get_minor_formatter()
+            if isinstance(default_minor_formatter, BaseLogFormatterSciNotation):
+                axis_obj.set_minor_formatter(LogFormatterSciNotation(low=low, high=high))
+            elif isinstance(default_minor_formatter, BaseScalarFormatter):
+                axis_obj.set_minor_formatter(ScalarFormatter(low=low, high=high))
+            
+        if axis in ['x', 'both']:
+            wrap_axis(ax_single.xaxis)
+        if axis in ['y', 'both']:
+            wrap_axis(ax_single.yaxis)
 
-    def wrap_axis(axis_obj):
-        default_major_formatter = axis_obj.get_major_formatter()
-        if isinstance(default_major_formatter, BaseLogFormatterSciNotation):
-            axis_obj.set_major_formatter(LogFormatterSciNotation(low=low, high=high))
-        elif isinstance(default_major_formatter, BaseScalarFormatter):
-            axis_obj.set_major_formatter(ScalarFormatter(low=low, high=high))
-        
-        default_minor_formatter = axis_obj.get_minor_formatter()
-        if isinstance(default_minor_formatter, BaseLogFormatterSciNotation):
-            axis_obj.set_minor_formatter(LogFormatterSciNotation(low=low, high=high))
-        elif isinstance(default_minor_formatter, BaseScalarFormatter):
-            axis_obj.set_minor_formatter(ScalarFormatter(low=low, high=high))
-        
-    if axis in ['x', 'both']:
-        wrap_axis(ax.xaxis)
-    if axis in ['y', 'both']:
-        wrap_axis(ax.yaxis)
+    if ax is None:
+        axes = plt.gcf().get_axes()
+    elif isinstance(ax, (list, tuple, np.ndarray)):
+        axes = ax
+    else:
+        axes = [ax]
+
+    for axis in axes:
+        apply_to_axis(axis)
 
 
 def set_ticks(ax=None, minor=True, direction='in',
@@ -199,16 +207,22 @@ def set_ticks(ax=None, minor=True, direction='in',
     >>> fig, ax = plt.subplots()
     >>> set_ticks(ax, minor=True, direction='inout', majlen=8)
     """
-    if ax is None:
-        ax = plt.gca()
+    def apply_to_axis(ax_single):
+        ax_single.tick_params(which='major', length=majlen, width=majwidth,
+                              direction=direction, right=right, top=top)
+        if minor:
+            ax_single.tick_params(which='minor', length=minlen, width=minwidth,
+                                  direction=direction, right=right, top=top)
+        else:
+            ax_single.tick_params(which='minor', length=0, width=0,
+                                  direction=direction, right=right, top=top)
 
-    ax.tick_params(which='major', length=majlen, width=majwidth,
-                   direction=direction, right=right, top=top)
-    
-    if minor:
-        ax.tick_params(which='minor', length=minlen, width=minwidth,
-                       direction=direction, right=right, top=top)
+    if ax is None:
+        axes = plt.gcf().get_axes()
+    elif isinstance(ax, (list, tuple, np.ndarray)):
+        axes = ax
     else:
-        # Remove minor ticks
-        ax.tick_params(which='minor', length=0, width=0,
-                       direction=direction, right=right, top=top)
+        axes = [ax]
+
+    for axis in axes:
+        apply_to_axis(axis)
