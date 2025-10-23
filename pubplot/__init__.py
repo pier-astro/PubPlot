@@ -1,2 +1,2 @@
 from .pubplot import * 
-import .jbuilder as jbuilder
+from . import jbuilder
