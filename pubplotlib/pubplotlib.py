@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt #type: ignore
 import yaml
 from importlib.resources import files
 
+golden = (1 + 5**0.5) / 2  # golden ratio
+pt = 1 / 72.27  # points to inches
+cm = 1 / 2.54  # centimeters to inches
 
 def load_journal_sizes():
     """Load journal sizes from a YAML configuration file.
@@ -30,10 +33,6 @@ def setup_figure(journal="aanda", columns=1, height_ratio=None, jour_sizes=None,
     fig, ax: Matplotlib figure and axis objects.
     """
 
-    pt = 1 / 72.27  # points to inches
-    
-    golden = (1 + 5**0.5) / 2  # golden ratio
-    
     if jour_sizes is None:
         jour_sizes = load_journal_sizes()
     
@@ -66,5 +65,3 @@ def setup_figure(journal="aanda", columns=1, height_ratio=None, jour_sizes=None,
     else:
         fig, ax = plt.subplots(figsize=(width, height), **kwargs)
         return fig, ax
-
-
