@@ -21,7 +21,7 @@ def load_journal_sizes():
     return jour_sizes
 
 
-def setup_figure(journal="aanda", columns=1, height_ratio=None, jour_sizes=None, gridspec=False, **kwargs):
+def setup_figure(journal="aanda", twocols=False, height_ratio=None, jour_sizes=None, gridspec=False, **kwargs):
     """Set up a matplotlib figure with dimensions suitable for publication.
 
     Parameters:
@@ -40,15 +40,15 @@ def setup_figure(journal="aanda", columns=1, height_ratio=None, jour_sizes=None,
     if journal not in jour_sizes:
         raise ValueError(f"Journal '{journal}' not recognized. Available journals: {list(jour_sizes.keys())}")
 
-    if columns == 1:
-        width = jour_sizes[journal]["onecol"]
-    elif columns == 2:
+
+    if twocols:
         if "twocol" in jour_sizes[journal]:
             width = jour_sizes[journal]["twocol"]
         else:
             raise ValueError(f"Journal '{journal}' does not support two-column figures.")
     else:
-        raise ValueError("Columns must be either 1 or 2.")
+        width = jour_sizes[journal]["onecol"]
+
 
     if height_ratio is None:
         height_ratio = 1 / golden
@@ -56,12 +56,16 @@ def setup_figure(journal="aanda", columns=1, height_ratio=None, jour_sizes=None,
     else:   
         height = width * height_ratio
 
-    # match case for matplotlib style
+    return width, height
+
+def figure(journal="aanda", twocols=False, height_ratio=None, jour_sizes=None, gridspec=False, **kwargs):
+    width, height = setup_figure(journal, twocols, height_ratio, jour_sizes, gridspec, **kwargs)
     plt.style.use(files("pubplotlib").joinpath(f"assets/{journal.lower()}.mplstyle"))
-    
-    if gridspec:
-        fig = plt.figure(figsize=(width, height), **kwargs)
-        return fig
-    else:
-        fig, ax = plt.subplots(figsize=(width, height), **kwargs)
-        return fig, ax
+    fig = plt.figure(figsize=(width, height), **kwargs)
+    return fig
+
+def subplots(journal="aanda", twocols=False, height_ratio=None, jour_sizes=None, gridspec=False, **kwargs):
+    width, height = setup_figure(journal, twocols, height_ratio, jour_sizes, gridspec, **kwargs)
+    plt.style.use(files("pubplotlib").joinpath(f"assets/{journal.lower()}.mplstyle"))
+    fig, ax = plt.subplots(figsize=(width, height), **kwargs)
+    return fig, ax
