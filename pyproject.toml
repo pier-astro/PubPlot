@@ -19,3 +19,4 @@ requires-python = ">=3.8"
 where = ["."]
 
 [tool.setuptools.package-data]
+pubplot = ["assets/*"]
