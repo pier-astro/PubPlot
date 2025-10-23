@@ -176,11 +176,11 @@ def set_formatter(ax=None, low=0.01, high=100, axis='both'):
 
 def set_ticks(ax=None, minor=True, direction='in',
               right=True, top=True,
-              majlen=3.5, minlen=1.75,
-              majwidth=0.8, minwidth=0.8):
+              major_length=3.5, minor_length=1.75,
+              major_width=0.8, minor_width=0.8):
     """
     Configure tick appearance on axes.
-    
+
     Parameters
     ----------
     ax : matplotlib.axes.Axes, optional
@@ -193,25 +193,20 @@ def set_ticks(ax=None, minor=True, direction='in',
         Whether to show ticks on right y-axis.
     top : bool, default False
         Whether to show ticks on top x-axis.
-    majlen : float, default 7
-        Length of major ticks (matplotlib default is 6).
-    minlen : float, default 4
-        Length of minor ticks (matplotlib default is 3).
-    majwidth : float, default 0.8
+    major_length : float, default 3.5
+        Length of major ticks.
+    minor_length : float, default 1.75
+        Length of minor ticks.
+    major_width : float, default 0.8
         Width of major tick lines.
-    minwidth : float, default 0.8
+    minor_width : float, default 0.8
         Width of minor tick lines.
-        
-    Examples
-    --------
-    >>> fig, ax = plt.subplots()
-    >>> set_ticks(ax, minor=True, direction='inout', majlen=8)
     """
     def apply_to_axis(ax_single):
-        ax_single.tick_params(which='major', length=majlen, width=majwidth,
+        ax_single.tick_params(which='major', length=major_length, width=major_width,
                               direction=direction, right=right, top=top)
         if minor:
-            ax_single.tick_params(which='minor', length=minlen, width=minwidth,
+            ax_single.tick_params(which='minor', length=minor_length, width=minor_width,
                                   direction=direction, right=right, top=top)
         else:
             ax_single.tick_params(which='minor', length=0, width=0,
