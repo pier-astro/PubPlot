@@ -3,8 +3,8 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pubplot"
-version = "0.1.1"
+name = "pubplotlib"
+version = "0.1.2"
 description = "Make publication friendly plots easy!"
 authors = [
     { name = "Pierpaolo Condò", email = "pierpaolo.condo@gmail.com" },
