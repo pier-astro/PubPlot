@@ -16,10 +16,10 @@ xtick.top: False
 xtick.bottom: True
 ytick.left: True
 ytick.right: False
-xtick.minor.visible: True
+xtick.minor.visible: False
 ytick.minor.visible: False
-xtick.direction: in
-ytick.direction: in
+xtick.direction: out
+ytick.direction: out
 xtick.major.size: 3.5
 xtick.minor.size: 1.75
 ytick.major.size: 3.5
