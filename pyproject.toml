@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pubplot"
-version = "0.1.0"
+version = "0.1.1"
 description = "Make publication friendly plots easy!"
 authors = [
     { name = "Pierpaolo Condò", email = "pierpaolo.condo@gmail.com" },
