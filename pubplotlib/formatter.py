@@ -206,6 +206,7 @@ def set_ticks(ax=None, minor=True, direction='in',
         ax_single.tick_params(which='major', length=major_length, width=major_width,
                               direction=direction, right=right, top=top)
         if minor:
+            ax_single.minorticks_on()
             ax_single.tick_params(which='minor', length=minor_length, width=minor_width,
                                   direction=direction, right=right, top=top)
         else:
