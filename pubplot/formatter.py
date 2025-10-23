@@ -168,7 +168,7 @@ def set_formatter(ax=None, low=0.01, high=100, axis='both'):
 
 def set_ticks(ax=None, minor=True, direction='in',
               right=True, top=True,
-              majlen=7, minlen=4,
+              majlen=3.5, minlen=1.75,
               majwidth=0.8, minwidth=0.8):
     """
     Configure tick appearance on axes.
