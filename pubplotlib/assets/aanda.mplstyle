@@ -12,12 +12,12 @@ legend.framealpha: 0.3
 
 axes.prop_cycle: cycler('color', ['648FFF', '785EF0', 'DC267F', 'FE6100', 'FFB000'])
 
-xtick.top: True
+xtick.top: False
 xtick.bottom: True
 ytick.left: True
-ytick.right: True
+ytick.right: False
 xtick.minor.visible: True
-ytick.minor.visible: True
+ytick.minor.visible: False
 xtick.direction: in
 ytick.direction: in
 xtick.major.size: 3.5
