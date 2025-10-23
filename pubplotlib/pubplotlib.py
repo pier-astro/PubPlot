@@ -10,7 +10,7 @@ def load_journal_sizes():
     dict: A dictionary containing journal sizes.
     """
     
-    yaml_file = files("pubplot").joinpath("assets/journals.yaml")
+    yaml_file = files("pubplotlib").joinpath("assets/journals.yaml")
 
     with open(yaml_file, "r") as file:
         jour_sizes = yaml.safe_load(file)
@@ -58,7 +58,7 @@ def setup_figure(journal="aanda", columns=1, height_ratio=None, jour_sizes=None,
         height = width * height_ratio
 
     # match case for matplotlib style
-    plt.style.use(files("pubplot").joinpath(f"assets/{journal.lower()}.mplstyle"))
+    plt.style.use(files("pubplotlib").joinpath(f"assets/{journal.lower()}.mplstyle"))
     
     if gridspec:
         fig = plt.figure(figsize=(width, height), **kwargs)

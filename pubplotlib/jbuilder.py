@@ -1,8 +1,9 @@
 from typing import Dict, Optional, Mapping
 import yaml
+from importlib.resources import files
 
 def build_journal_sizes(
-    filename: str = "journals.yaml",
+    filename: str = None,
     pt: float = 1 / 72.27,
     custom: Optional[Mapping[str, Mapping[str, float]]] = None,
     write_yaml: bool = True,
@@ -25,6 +26,9 @@ def build_journal_sizes(
         "aanda": {"onecol": 256.0 * pt, "twocol": 523.5 * pt},
         "apj": {"onecol": 242.0 * pt},
     }
+
+    if filename is None:
+        filename = files("pubplotlib").joinpath("assets/journals.yaml")
 
     if custom:
         # Shallow merge: override existing journal keys or add new ones.
