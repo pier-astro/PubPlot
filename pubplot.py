@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt #type: ignore
 import yaml
+from importlib.resources import files
 
 
 def load_journal_sizes():
@@ -8,8 +9,10 @@ def load_journal_sizes():
     Returns:
     dict: A dictionary containing journal sizes.
     """
+    
+    yaml_file = files("pubplot").joinpath("assets/journals.yaml")
 
-    with open("journals.yaml", "r") as file:
+    with open(yaml_file, "r") as file:
         jour_sizes = yaml.safe_load(file)
     
     return jour_sizes
@@ -54,9 +57,8 @@ def setup_figure(journal="aanda", columns=1, height_ratio=None, jour_sizes=None,
     else:   
         height = width * height_ratio
 
-    
     # match case for matplotlib style
-    plt.style.use(f"{journal.lower()}.mplstyle")
+    plt.style.use(files("pubplot").joinpath(f"assets/{journal.lower()}.mplstyle"))
     
     if gridspec:
         fig = plt.figure(figsize=(width, height), **kwargs)
