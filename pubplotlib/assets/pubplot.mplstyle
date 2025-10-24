@@ -1,5 +1,5 @@
-text.usetex: True
-text.latex.preamble: \usepackage{amsmath}\usepackage{amssymb}
+text.usetex: False
+mathtext.fontset: stix # Options: dejavusans (default), dejavuserif, cm (Computer Modern), stix, stixsans
 font.family: serif
 font.serif: Times
 ytick.labelsize: 9
