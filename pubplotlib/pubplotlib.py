@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt  # type: ignore
+import os
 import yaml
-from importlib.resources import files
 from .jbuilder import Journal, yaml_filename, assets_dir
 
 # --- Constants ---
@@ -20,19 +20,12 @@ def _load_journal_registry():
             name=name,
             onecol=entry.get("onecol"),
             twocol=entry.get("twocol"),
-            mplstyle=entry.get("mplstyle"),
+            mplstyle=assets_dir.joinpath(entry.get("mplstyle")).as_posix() if entry.get("mplstyle") else None,
         )
         for name, entry in raw.items()
     }
 
 _journal_registry = _load_journal_registry()
-
-__all__ = [
-    'golden', 'pt', 'cm',
-    'set_journal', 'get_journal',
-    'setup_figsize', 'figure', 'subplots', 'set_ticks',
-    'available_journals'
-]
 
 def available_journals():
     """Return a list of available journals."""
@@ -54,9 +47,18 @@ def set_journal(journal=None):
     j = get_journal(journal)
     if _current_journal == j.name:
         return
-    style_path = str(assets_dir.joinpath(j.mplstyle))
-    plt.style.use(style_path)
+    
+    if j.mplstyle is not None:
+        if os.path.isabs(j.mplstyle):
+            style_path = j.mplstyle
+        else:
+            style_path = str(assets_dir.joinpath(j.mplstyle))
+        plt.style.use(style_path)
     _current_journal = j.name
+
+def restore_matplotlib_default_style():
+    """Restore matplotlib's default style."""
+    plt.style.use('default')
 
 def setup_figsize(journal=None, twocols=False, height_ratio=None):
     """Return (width, height) in inches for the journal."""

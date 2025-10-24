@@ -8,6 +8,8 @@ from importlib.resources import files
 assets_dir = files("pubplotlib").joinpath("assets")
 yaml_filename = assets_dir.joinpath("journals.yaml")
 
+core_styles = ['pubplot.mplstyle', 'aanda.mplstyle', 'apj.mplstyle']
+
 def build_journals(overwrite: bool = False) -> Dict[str, Dict[str, object]]:
     """
     Build and write the default journals YAML file with standard journals.
@@ -40,6 +42,33 @@ def build_journals(overwrite: bool = False) -> Dict[str, Dict[str, object]]:
 
     return journals
 
+def remove_journal(name: str):
+    """
+    Remove a journal from the YAML registry and delete its style file.
+
+    Args:
+        name: The name of the journal to remove.
+    """
+    if not yaml_filename.exists():
+        raise FileNotFoundError(f"{yaml_filename} does not exist.")
+
+    with open(yaml_filename, "r", encoding="utf-8") as f:
+        journals = yaml.safe_load(f) or {}
+
+    if name not in journals:
+        raise ValueError(f"Journal '{name}' not found in {yaml_filename}.")
+
+    style_filename = journals[name].get("mplstyle")
+    if style_filename and (style_filename not in core_styles):
+        style_path = assets_dir.joinpath(style_filename)
+        if style_path.exists():
+            os.remove(style_path)
+
+    del journals[name]
+
+    with open(yaml_filename, "w", encoding="utf-8") as f:
+        yaml.safe_dump(journals, f, default_flow_style=False)
+
 class Journal:
     """
     Represents a scientific journal's figure formatting requirements.
@@ -60,21 +89,18 @@ class Journal:
         self.name = name
         self.onecol = onecol
         self.twocol = twocol
+        self.mplstyle = mplstyle
 
         # Always store the style filename (not full path)
-        if mplstyle is None:
-            style_filename = f"{self.name.lower()}.mplstyle"
-        else:
-            style_filename = os.path.basename(mplstyle)
-        self.mplstyle = style_filename
+        if mplstyle is not None:
+            if os.path.exists(mplstyle):
+                style_filename = os.path.abspath(mplstyle)
+            else:
+                raise FileNotFoundError(f"Style file '{mplstyle}' does not exist.")
+            self.mplstyle = style_filename
 
         if self.onecol is None and self.twocol is None:
             raise ValueError("At least one of 'onecol' or 'twocol' must be provided.")
-
-        # Check that the style file exists in assets_dir
-        style_path = assets_dir.joinpath(self.mplstyle)
-        if not style_path.exists():
-            raise FileNotFoundError(f"Style file '{style_path}' does not exist in assets directory.")
 
     def register(self, overwrite: bool = False):
         """
@@ -84,19 +110,14 @@ class Journal:
         Args:
             overwrite (bool): If True, overwrite existing entry and style file.
         """
-        style_filename = self.mplstyle
-        style_dest = assets_dir.joinpath(style_filename)
+        style_filename = os.path.basename(self.mplstyle) if self.mplstyle else None
+        style_dest = assets_dir.joinpath(style_filename) if style_filename else None
 
-        # If the style file is not in assets_dir, copy it there
-        if not style_dest.exists() or overwrite:
-            # If the user gave a full path, copy from there; otherwise, error
-            if not style_dest.exists() and not os.path.isabs(style_filename):
-                raise FileNotFoundError(
-                    f"Style file '{style_dest}' does not exist. Please provide the full path to the style file."
-                )
-            # Only copy if the source is not already the destination
-            if os.path.isabs(style_filename) and (not style_dest.exists() or overwrite):
-                shutil.copyfile(style_filename, style_dest)
+        if style_filename:
+            if os.path.exists(style_dest) and not overwrite:
+                raise FileExistsError(f"Style file '{style_filename}' already exists in the assets directory. Use overwrite=True to replace it.")
+            else:
+                shutil.copyfile(self.mplstyle, style_dest)
 
         # Load or create the YAML
         if yaml_filename.exists():
@@ -107,7 +128,7 @@ class Journal:
 
         if self.name in journals and not overwrite:
             raise ValueError(
-                f"Journal '{self.name}' already exists in {yaml_filename}. Use overwrite=True to replace it."
+                f"Journal '{self.name}' already exists in {yaml_filename}. Use overwrite=True to replace it or provide a different name."
             )
 
         journals[self.name] = {}
@@ -115,7 +136,7 @@ class Journal:
             journals[self.name]["onecol"] = self.onecol
         if self.twocol is not None:
             journals[self.name]["twocol"] = self.twocol
-        journals[self.name]["mplstyle"] = style_filename
+        journals[self.name]["mplstyle"] = style_filename  # Will be None if not provided
 
         with open(yaml_filename, "w", encoding="utf-8") as f:
             yaml.safe_dump(journals, f, default_flow_style=False)

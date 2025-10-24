@@ -1,118 +1,156 @@
-# PubPlotLib 🎨
+# PubPlotLib
 
-Effortlessly create publication-ready `matplotlib` figures with dimensions and styles tailored for specific academic journals.
+[![PyPI version](https://badge.fury.io/py/pubplotlib.svg)](https://badge.fury.io/py/pubplotlib)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-`PubPlotLib` is a lightweight wrapper around `matplotlib` that takes the guesswork out of sizing your figures. Simply specify the target journal and page layout, and get a perfectly dimensioned figure and axes, ready for plotting.
+`PubPlotLib` is a Python library built on top of Matplotlib that simplifies the creation of publication-quality figures. It provides pre-configured styles and sizes for major scientific journals, allowing you to focus on your data, not the boilerplate code for plotting.
 
+## Key Features
 
-
----
-
-## Features
-
-* **Journal Presets**: Automatically sets figure dimensions for journals like *Astronomy & Astrophysics* (`aanda`) and more.
-* **Style Integration**: Applies a corresponding `matplotlib` stylesheet (`.mplstyle`) for your chosen journal to ensure stylistic consistency.
-* **Column Aware**: Easily create figures for single (`columns=1`) or double (`columns=2`) column layouts.
-* **Smart Sizing**: Defaults to the golden ratio for a pleasing aspect ratio, but allows for full control via the `height_ratio` parameter.
-* **Flexible**: Directly passes keyword arguments (`**kwargs`) to `matplotlib.pyplot.subplots`, so you retain full control.
-
----
+*   **Journal-Ready Figures**: Automatically create figures with the correct dimensions and styles for journals like A&A, ApJ, and more.
+*   **Simple API**: Use `pubplotlib.figure` and `pubplotlib.subplots` as drop-in replacements for their Matplotlib counterparts.
+*   **Flexible Sizing**: Easily switch between single-column and double-column layouts and control the aspect ratio.
+*   **Smart Formatting**: Apply sensible defaults for axis tick formatters that avoid scientific notation for numbers like 1.0 (i.e., no more $10^0$).
+*   **Customizable Ticks**: Fine-tune the appearance of major and minor ticks with a single function call.
+*   **Extensible**: Add your own custom journal styles and sizes with ease.
 
 ## Installation
 
-To add this library to your project, simply include the `pubplotlib.py` file and the `assets` directory. Your project will need the following dependencies:
+You can install PubPlotLib via pip:
 
 ```bash
 pip install pubplotlib
 ```
 
----
-
 ## Quick Start
 
-Creating a publication-ready figure is as simple as calling `setup_figure()` before you start plotting.
+Creating a journal-styled figure is as simple as importing `pubplotlib` and using its `subplots` function.
 
 ```python
 import numpy as np
-import pubplotlib as pplt
 import matplotlib.pyplot as plt
+import pubplotlib as pplt
 
-# 1. Setup the figure for a single-column A&A article
-# This returns matplotlib fig and ax objects with the correct size and style.
-fig, ax = pplt.setup_figure(journal="aanda", columns=1)
+# 1. Set your target journal (optional, can be done per-figure)
+pplt.set_journal('apj')
 
-# 2. Create your data
-x = np.linspace(0, 2 * np.pi, 200)
-y = np.sin(x)
+# 2. Create data
+x = np.linspace(0.1, 10, 500)
+y = np.sin(x) / x
 
-# 3. Plot your data using the returned axes object
-ax.plot(x, y, label=r'$\sin(x)$')
-ax.set_xlabel("Angle [rad]")
-ax.set_ylabel("Amplitude")
-ax.set_title("My A&A Figure")
-ax.legend()
-ax.grid(True)
+# 3. Create a figure using pubplotlib's wrapper
+fig, ax = pplt.subplots()
+ax.plot(x, y)
+ax.set_xlabel("Time (s)")
+ax.set_ylabel("Signal")
 
-# 4. Save the figure with a tight layout
-fig.savefig("aanda_figure.pdf", bbox_inches='tight')
+# 4. Customize ticks and formatters for a professional look
+pplt.set_ticks(ax)
+pplt.set_formatter(ax)
 
-# Optional: display the plot
 plt.show()
 ```
 
-This will produce a PDF file named `aanda_figure.pdf` correctly sized and styled for the journal.
+## Usage
 
----
+### Figure Sizing
 
-## Customization
+`PubPlotLib` makes it easy to create figures that fit perfectly into your manuscript's columns.
 
-### Adding a New Journal
+#### Single and Double Column Figures
 
-You can easily extend `PubPlotLib` to support new journals.
-
-1.  **Add the Dimensions**: Open the `assets/journals.yaml` file and add a new entry with the journal's name and its single-column (`onecol`) and, if applicable, double-column (`twocol`) widths in points (pt).
-
-    ```yaml
-    # assets/journals.yaml
-    aanda:
-      onecol: 256.0748
-      twocol: 523.5307
-
-    # Add your new journal here
-    newjournal:
-      onecol: 300.0
-      twocol: 600.0
-    ```
-
-2.  **Create a Style File**: Create a new matplotlib style file named `newjournal.mplstyle` in the `assets` directory. Here you can define colors, font sizes, line styles, and more.
-
-    ```css
-    # assets/newjournal.mplstyle
-    axes.labelsize: 10
-    font.size: 10
-    legend.fontsize: 8
-    xtick.labelsize: 8
-    ytick.labelsize: 8
-    ```
-
-Now you can use your new journal preset: `pplt.setup_figure(journal="newjournal")`.
-
-### Using `gridspec`
-
-If you need more complex layouts (e.g., subplots of different sizes), you can set `gridspec=True`. This tells `PubPlot` to return only the `figure` object, which you can then use to create your own grid specification.
+Use the `twocols=True` argument to create a figure with the width of a double column.
 
 ```python
-import pubplot as pplt
-import matplotlib.pyplot as plt
-
-# Get a styled figure object
-fig = pplt.setup_figure(journal="aanda", columns=2, gridspec=True)
-
-# Create a custom grid
-gs = fig.add_gridspec(2, 2)
-ax1 = fig.add_subplot(gs[0, :])
-ax2 = fig.add_subplot(gs[1, 0])
-ax3 = fig.add_subplot(gs[1, 1])
-
-# ... now you can plot on ax1, ax2, and ax3
+# A figure spanning two columns in an 'aanda' paper
+fig, ax = pplt.subplots(journal='aanda', twocols=True)
+ax.plot(...)
 ```
+
+#### Custom Aspect Ratio
+
+Control the figure's height using the `height_ratio` argument. The height will be `width * height_ratio`. If not provided, it defaults to the golden ratio.
+
+```python
+# Create a wide, short figure
+fig, ax = pplt.subplots(twocols=True, height_ratio=0.3)
+ax.plot(...)
+```
+
+### Axis Styling
+
+#### Tick Customization
+
+The `set_ticks()` function provides control over the appearance of axis ticks across all subplots in a figure.
+
+```python
+fig, ax = pplt.subplots()
+ax.plot(...)
+
+# Show ticks on all sides, pointing inwards
+pplt.set_ticks(ax, direction='in', top=True, right=True)
+```
+
+#### Smart Axis Formatters
+
+Logarithmic axes in Matplotlib often format the number 1 as $10^0$. `set_formatter()` applies a more readable formatter that uses decimal notation for numbers within a sensible range and scientific notation outside of it.
+
+```python
+fig, ax = pplt.subplots()
+ax.loglog(x, 10**(y*4))
+
+# Apply the formatter to both axes
+pplt.set_formatter(ax) # No more "10^0"!
+```
+
+### Managing Journals
+
+`PubPlotLib` comes with built-in support for several journals.
+
+#### List Available Journals
+
+See which journals are available out-of-the-box:
+
+```python
+print(pplt.available_journals())
+```
+
+#### Adding a New Journal
+
+You can easily define and register your own journal style.
+
+1.  **Create a `Journal` object**: Specify its name and column widths in inches. You can optionally link a `.mplstyle` file.
+
+    ```python
+    # Assumes 'my_style.mplstyle' exists in your working directory
+    my_journal = pplt.Journal(
+        name="my_journal",
+        onecol=3.5,          # 3.5 inches wide
+        twocol=7.1,          # 7.1 inches wide
+        mplstyle="my_style.mplstyle"
+    )
+    ```
+
+2.  **Register the journal**: This makes it available globally by copying the style file into the package's assets and adding it to the configuration.
+
+    ```python
+    my_journal.register(overwrite=True)
+    ```
+
+Now you can use it like any other journal:
+
+```python
+fig, ax = pplt.subplots(journal="my_journal")
+```
+
+#### Removing a Journal
+
+You can remove a custom journal you've added.
+
+```python
+pplt.jbuilder.remove_journal("my_journal")
+```
+
+## Contributing
+
+Contributions are welcome! If you'd like to add a new journal style, fix a bug, or suggest an improvement, please open an issue or submit a pull request on our GitHub repository.
